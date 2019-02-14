@@ -37,7 +37,8 @@ const glew = {
     // Convert date from DateObj to String
     const formatDate = d3.timeFormat('%b %e, %Y');
 
-    const rawData = datasets.find(d => d.queryName === queryName);
+    // const rawData = datasets.find(d => d.queryName === queryName);
+    const rawData = glew.getDataFromQuery(queryName);
     const content = rawData.content;
 
     const totals = content.reduce((acc, cur) => {
@@ -128,7 +129,7 @@ const glew = {
 
     let color = d3.scaleOrdinal()
       .domain(channelsSorted)
-      .range(stackedBarColors);
+      .range(colorArr);
 
     // Axis groups
     let xAxis = chart.append('g')
