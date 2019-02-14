@@ -29,7 +29,7 @@ const glew = {
       queryName,
       colorArr = ['#2196F3', '#7168F2', '#00B8CC', '#55E0AA', '#FFB300', '#FF525E', '#8EA2AC', 'rgb(255, 152, 150)', 'rgb(148, 103, 189)', 'rgb(197, 176, 213)', 'rgb(140, 86, 75)', 'rgb(196, 156, 148)', 'rgb(227, 119, 194)', 'rgb(250, 175, 250)', 'rgb(255, 238, 0)', 'rgb(252, 163, 45)', 'rgb(15, 22, 219)', 'rgb(15, 219, 196)'],
       yAxisLabel = '',
-      margins = { top: 80, right: 30, bottom: 70, left: 80 };
+      margins = { top: 80, right: 30, bottom: 70, left: 80 }
     } = params;
 
     // Convert date from string to Date Obj
