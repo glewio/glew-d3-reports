@@ -9,7 +9,7 @@ const glew = {
   getColumnsFromQuery: function(queryName) {
     var columns = datasets.filter(function(d) { if (d) { return d.queryName == queryName;}; })[0];
     if (!columns) {
-      alamode.reportError("No such query: '" + queryName + "'");
+      glew.reportError("No such query: '" + queryName + "'");
       return [];
     }
     return columns.columns
@@ -18,31 +18,54 @@ const glew = {
   getDataFromQuery: function(queryName) {
     var data = datasets.filter(function(d) { if (d) { return d.queryName == queryName;}; })[0];
     if (!data) {
-      alamode.reportError("No such query: '" + queryName + "'");
+      glew.reportError("No such query: '" + queryName + "'");
       return [];
     }
     return data.content;
   },
 
   stackedBarChart: function(params = {}) {
+    if(params === 'Define Params') {
+      console.log({
+        queryName: 'String: The name of the Mode query returning the data you want to use to generate the report',
+        dataFormat: 'The query should return 3 columns, the_date, a grouping (ie the "stacks"), and the value to be returned.  For example, the_date, channels, orders',
+        yAxisLabel: 'String: The label of the yAxis.  Defaults to empty string',
+        margins: 'Object: An object with top, right, bottom, and left keys.  These are the margins of the report within the outter svg',
+        xAxisValue: 'String: The column name in the query for the xAxis.Default value is "the_date"',
+        yAxisValue: 'String: The column name in the query for the yAxis. Default value is "values"',
+        stack: 'String: The column name in the query for the stacks (ie groupings). Default value is "channel"',
+        divSelector: 'String: The selector (id or class) of the div that\'s going to contain the chart.  By the way, you need to add a div with an id that will wrap the chart.  Default is "#d3-bar"',
+        timeParseFormat: 'String: The format of the time your query returns (https://github.com/d3/d3-time-format). Default is "%Y-%m-%d"',
+        timeFomat: 'String: The time format you want to display on your bar graph (https://github.com/d3/d3-time-format).  Default is "%b %e, %Y"',
+        outterWidth: 'Int: The "outter" width (in px) of your bar chart (the chart will be this - margins.left - margins.right).  Default is 1080',
+        outterHeight: 'Ing: The "outter" height (in px) of your bar chart (the chart will be this - margins.top - margins.bottom).  Default is 600'
+      });
+      return;
+    }
     const {
       queryName,
       colorArr = ['#2196F3', '#7168F2', '#00B8CC', '#55E0AA', '#FFB300', '#FF525E', '#8EA2AC', 'rgb(255, 152, 150)', 'rgb(148, 103, 189)', 'rgb(197, 176, 213)', 'rgb(140, 86, 75)', 'rgb(196, 156, 148)', 'rgb(227, 119, 194)', 'rgb(250, 175, 250)', 'rgb(255, 238, 0)', 'rgb(252, 163, 45)', 'rgb(15, 22, 219)', 'rgb(15, 219, 196)'],
       yAxisLabel = '',
-      margins = { top: 80, right: 30, bottom: 70, left: 80 }
+      margins = { top: 80, right: 30, bottom: 70, left: 80 },
+      xAxisValue = 'the_date',
+      yAxisValue = 'values',
+      stack = 'groups',
+      divSelector = '#d3-bar',
+      timeParseFormat = '%Y-%m-%d',
+      timeFomat = '%b %e, %Y',
+      outterWidth = 1080,
+      outterHeight = 400,
     } = params;
 
     // Convert date from string to Date Obj
-    const parseDate = d3.timeParse('%Y-%m-%d');
+    const parseDate = d3.timeParse(timeParseFormat);
     // Convert date from DateObj to String
-    const formatDate = d3.timeFormat('%b %e, %Y');
-
+    const formatDate = d3.timeFormat(timeFomat);
     // const rawData = datasets.find(d => d.queryName === queryName);
     const rawData = glew.getDataFromQuery(queryName);
-    const content = rawData.content;
 
-    const totals = content.reduce((acc, cur) => {
-      const curChan = cur.channel;
+    const totals = rawData.reduce((acc, cur) => {
+      const curChan = cur[stack];
       return Object.keys(acc).includes(curChan) ? { ...acc,
         [curChan]: acc[curChan] += cur.orders
       } : { ...acc,
@@ -50,22 +73,17 @@ const glew = {
       }
     }, {});
 
-    const channelsSorted = Object.keys(totals).sort((a, b) => totals[b] - totals[a]);
+    const groupingSorted = Object.keys(totals).sort((a, b) => totals[b] - totals[a]);
 
-    const pivotedData = content.reduce((acc, cur) => {
-      const {
-        the_date,
-        channel,
-        orders
-      } = cur;
-      const exist = acc.find(c => c.date === the_date)
+    const pivotedData = rawData.reduce((acc, cur) => {
+      const exist = acc.find(c => c.date === cur[xAxisValue])
       if (exist) {
-        exist[channel] = orders;
+        exist[cur[stack]] = cur[yAxisValue];
         return acc;
       } else {
         return [...acc, {
-          date: the_date,
-          [channel]: orders
+          date: cur[xAxisValue],
+          [cur[stack]]: cur[yAxisValue]
         }];
       }
     }, []);
@@ -74,44 +92,34 @@ const glew = {
       const obj = {
         date: d.date
       }
-      const finalObj = channelsSorted.reduce((acc, cur) => {
+      const finalObj = groupingSorted.reduce((acc, cur) => {
         return { ...acc,
           [cur]: d[cur] || 0
         }
       }, obj);
       return finalObj
     });
-
-    const dates = content.reduce((acc, cur) => {
-      return acc.includes(cur.the_date)
+    
+    const dates = rawData.reduce((acc, cur) => {
+      return acc.includes(cur[xAxisValue])
         ? acc
-        : [...acc, cur.the_date]
+        : [...acc, cur[xAxisValue]]
     }, []).map(d => parseDate(d));
 
-    const stacked = d3.stack().keys(channelsSorted)(dataFinal);
+    const stacked = d3.stack().keys(groupingSorted)(dataFinal);
     const dailyTotals = stacked[0].map(d => {
-      const {
-        date,
-        ...channels
-      } = d.data;
-      const totals = Object.keys(channels).reduce((acc, cur) => acc + channels[cur], 0);
+      const date = d.data.date;
+      const totals = Object.keys(stack).reduce((acc, cur) => acc + stack[cur], 0);
       return {
         date,
         totals
       }
     }, {})
-    // Set up basic constants
-    const yAxisValue = yAxisLabel
-    const margin = {
-      top: 80,
-      right: 30,
-      bottom: 70,
-      left: 80
-    };
-    const width = 1080 - margins.right - margins.left;
-    const height = 400 - margins.top - margins.bottom;
 
-    const svg = d3.select('#d3-bar').append('svg')
+    const width = outterWidth - margins.right - margins.left;
+    const height = outterHeight - margins.top - margins.bottom;
+
+    const svg = d3.select(divSelector).append('svg')
       .attr('id', 'bar-chart')
       .attr("width", width + margins.left + margins.right)
       .attr("height", height + margins.top + margins.bottom)
@@ -128,14 +136,13 @@ const glew = {
     let y = d3.scaleLinear().range([height, 0]);
 
     let color = d3.scaleOrdinal()
-      .domain(channelsSorted)
+      .domain(groupingSorted)
       .range(colorArr);
 
     // Axis groups
     let xAxis = chart.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${height})`)
-
 
     let yAxis = chart.append('g')
       .attr('class', 'y-axis');
@@ -149,14 +156,7 @@ const glew = {
       .attr('fill', 'black')
       .text(yAxisValue);
 
-
-
-    // // Generate axes onces scales have been set
-    // xAxis.call(xAxisCall.scale(x));
-    // yAxis.call(yAxisCall.scale(y));
-
-
-    let tooltip = d3.select("#d3-bar")
+    let tooltip = d3.select(divSelector)
       .append("div")
       .attr("class", "tooltip-outter-div")
       .style("visibility", "hidden")
@@ -190,7 +190,7 @@ const glew = {
               .tickFormat("")
           )
 
-    channelsSorted.forEach((c, i) => {
+    groupingSorted.forEach((c, i) => {
       // Add a row for each item with a space of 20px
       const strLength = c.length;
       let legendRow = legend.append('g')
@@ -452,3 +452,4 @@ const glew = {
     }
 
 }
+
