@@ -1,0 +1,142 @@
+#d3-bar {
+  background-color: #fff;
+}
+
+#bar-chart {
+  display: block;
+  margin: auto;
+}
+
+.bar-legend {
+  border: 1px solid black;
+}
+
+.legend-dot {
+  pointer-events: bounding-box;
+}
+
+.cur-area {
+  fill-opacity: 0.05;
+  fill: #488dfb;
+}
+
+.cur-point {
+  fill: #488dfb;
+}
+
+.cur-line {
+  stroke: #488dfb;
+  stroke-width: '5px';
+  fill: none;
+}
+
+.prev-area {
+  fill-opacity: 0.05;
+  fill: #8fa2ab;
+}
+
+.prev-point {
+  fill: #8fa2ab;
+}
+
+.prev-line {
+  stroke: #8fa2ab;
+  stroke-width: '5px';
+  fill: none;
+}
+
+.grid .tick {
+  stroke: lightgrey;
+  opacity: 0.1;
+}
+
+.grid path {
+  stroke-width: 0;
+}
+
+.y-axis line, path {
+  stroke: lightgrey;
+}
+
+.y-axis text {
+  fill: #8EA2AC;
+}
+
+.x-axis line, path {
+  stroke: none;
+}
+
+.x-axis text {
+  fill: #8EA2AC;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: #F1F3F3;
+  stroke: #488dfb;
+  stroke-width: 5px;
+}
+
+.hover-line {
+  stroke: #488dfb;
+  stroke-width: 2px;
+  stroke-dasharray: 3, 3;
+}
+
+.tooltip-outter-div {
+  border: 1px solid #d3d4d8;
+  border-radius: 2px;
+  width: 220px;
+  height: 280px;
+  background-color: #fff;
+  position: absolute;
+  z-index: '100';
+}
+
+.tip-header {
+  border-bottom: 1px solid #d3d4d8;
+  text-align: center;
+  padding: 5px 15px;
+  background: #f3f4f7;
+  color: #556e79;
+  font-weight: 500;
+}
+
+.tip-body {
+  padding: 10px 10px 5px 10px;
+}
+
+.tip-totals {
+  padding: 0px 10px 10px 10px;
+}
+
+.tip-body-channel-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.tip-body-channel {
+  display: inline-block;
+  width: 100px;
+  font-weight: 500;
+  text-align: left;
+  padding-left: 2px;
+}
+
+.tip-body-orders {
+  display: inline-block;
+  text-align: right;
+  width: 70px;
+  color: #556e79;
+}
+
+.tip-body-selected {
+  background-color: #eaebed;
+  opacity: 0.2;
+}
