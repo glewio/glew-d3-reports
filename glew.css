@@ -1,20 +1,14 @@
+#d3-line {
+  background-color: #fff;
+  position: relative;
+}
+
 #d3-bar {
   background-color: #fff;
+  position: relative;
 }
 
-#bar-chart {
-  display: block;
-  margin: auto;
-}
-
-.bar-legend {
-  border: 1px solid black;
-}
-
-.legend-dot {
-  pointer-events: bounding-box;
-}
-
+/* Fill for current period area: */
 .cur-area {
   fill-opacity: 0.05;
   fill: #488dfb;
@@ -29,6 +23,7 @@
   stroke-width: '5px';
   fill: none;
 }
+
 
 .prev-area {
   fill-opacity: 0.05;
@@ -46,29 +41,38 @@
 }
 
 .grid .tick {
-  stroke: lightgrey;
-  opacity: 0.1;
+    stroke: lightgrey;
+    opacity: 0.1;
 }
-
 .grid path {
-  stroke-width: 0;
+      stroke-width: 0;
 }
 
-.y-axis line, path {
+.y-axis line{
   stroke: lightgrey;
 }
+
+.y-axis path{
+  stroke: lightgrey;
+}
+
 
 .y-axis text {
   fill: #8EA2AC;
 }
 
-.x-axis line, path {
+.x-axis line{
+  stroke: none;
+}
+
+.x-axis path{
   stroke: none;
 }
 
 .x-axis text {
   fill: #8EA2AC;
 }
+
 
 .overlay {
   fill: none;
@@ -84,10 +88,14 @@
 .hover-line {
   stroke: #488dfb;
   stroke-width: 2px;
-  stroke-dasharray: 3, 3;
+  stroke-dasharray: 3,3;
 }
 
-.tooltip-outter-div {
+.stackedBar-legend-dot {
+  pointer-events: bounding-box;
+}
+
+.stackedBar-tooltip-outter-div {
   border: 1px solid #d3d4d8;
   border-radius: 2px;
   width: 220px;
@@ -97,7 +105,17 @@
   z-index: '100';
 }
 
-.tip-header {
+/*.popLineChart-tooltip-outter-div {*/
+/*  position: relative;*/
+/*  z-index: '100';*/
+/*}*/
+
+/*.stackedBar-tooltip-outter-div {*/
+/*  position: relative;*/
+/*  z-index: '100';*/
+/*}*/
+
+.stackedBar-tip-header {
   border-bottom: 1px solid #d3d4d8;
   text-align: center;
   padding: 5px 15px;
@@ -106,22 +124,22 @@
   font-weight: 500;
 }
 
-.tip-body {
+.stackedBar-tip-body {
   padding: 10px 10px 5px 10px;
 }
 
-.tip-totals {
+.stackedBar-tip-totals {
   padding: 0px 10px 10px 10px;
 }
 
-.tip-body-channel-color {
+.stackedBar-tip-body-channel-color {
   width: 10px;
   height: 10px;
   border-radius: 5px;
   display: inline-block;
 }
 
-.tip-body-channel {
+.stackedBar-tip-body-channel {
   display: inline-block;
   width: 100px;
   font-weight: 500;
@@ -129,14 +147,227 @@
   padding-left: 2px;
 }
 
-.tip-body-orders {
+.stackedBar-tip-body-orders {
   display: inline-block;
   text-align: right;
   width: 70px;
   color: #556e79;
 }
 
-.tip-body-selected {
+.stackedBar-tip-body-selected {
   background-color: #eaebed;
-  opacity: 0.2;
+  /*opacity: 0.2;*/
+}
+
+.popLineChart-tooltip-outter-div {
+  border: 1px solid #d3d4d8;
+  border-radius: 2px;
+  width: 180px;
+  height: 80px;
+  background-color: #fff;
+  position: absolute;
+  z-index: '100';
+}
+
+.popLineChart-tip-header {
+  border-bottom: 1px solid #d3d4d8;
+  text-align: center;
+  padding: 5px 15px;
+  background: #f3f4f7;
+  color: #556e79;
+  font-weight: 500;
+}
+
+.popLineChart-tip-body {
+  padding: 10px;
+}
+
+.popLineChart-tip-body-cur-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  background: #488dfb;
+}
+
+.popLineChart-tip-body-cur-date {
+  display: inline-block;
+  width: 100px;
+  font-weight: 500;
+  text-align: left;
+  padding-left: 2px;
+}
+.popLineChart-tip-body-cur-value {
+  display: inline-block;
+  text-align: right;
+  width: 40px;
+  color: #556e79;
+}
+
+.popLineChart-tip-body-prev-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  background: #8fa2ab;
+}
+
+.popLineChart-tip-body-prev-date {
+  display: inline-block;
+  width: 100px;
+  font-weight: 500;
+  text-align: left;
+  padding-left: 2px;
+}
+.popLineChart-tip-body-prev-value {
+  display: inline-block;
+  text-align: right;
+  width: 40px;
+  color: #556e79;
+}
+table thead th {
+  font-weight: 700 !important;
+  color: #424854;
+  background-color: #F4F5F8;
+  border-color: #D8D9DC;
+  padding: 16px 12px 16px 18px;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.layout-row {
+  box-sizing: border-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+/*.toggles {*/
+
+/*  display: inline-block;*/
+
+/*}*/
+
+thead th .toggles {
+  width: 18px;
+  height: 20px;
+  position: relative;
+  bottom: 1px;
+}
+
+.material-icons {
+  ont-family: 'Material Icons';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  max-width: 24px;
+  overflow: hidden;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.toggles i.material-icons:first-child {
+  top: -4px;
+}
+
+.toggles i.material-icons:last-child {
+  bottom: -6px;
+}
+
+th .toggles i.material-icons {
+  color: #8EA2AC;
+  position: absolute;
+  left: 0;
+}
+
+tbody td {
+  padding: 12px 12px 12px 18px;
+  font-size: 15px;
+  vertical-align: middle;
+  line-height: 1.1;
+  white-space: normal !important;
+  text-align: right;
+}
+
+tbody tr {
+  padding: 12px 12px 12px 18px;
+  font-size: 15px;
+  vertical-align: middle;
+  line-height: 1.1;
+  white-space: normal !important;
+}
+
+tbody tr:nth-child(odd) {
+  background: #fff !important;
+}
+
+thead th {
+  border: 1px solid #EBECED;
+}
+
+tbody td {
+  border: 1px solid #EBECED;
+}
+
+.selected {
+  background-color: #e8f5fe;
+}
+
+tbody td:first-child {
+  text-align: left;
+}
+
+.table_footer {
+  font-size: 15px;
+  background-color: #FAFBFC;
+  color: rgba(41, 48, 64, .6);
+  border-top: 1px solid #C1CBD2;
+  width: 100%;
+  padding: 18px 50px 18px 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.footer {
+  flex-direction: row;
+  display: flex;
+}
+
+.show_dropdown {
+  margin-left: 12px;
+  font-size: 15px;
+  background-color: #FAFBFC;
+  color: rgba(41, 48, 64, .6);
+  width: 100%;
+  padding: 18px;
+  display: block;
+  white-space: nowrap;
+}
+
+.show_text {
+  margin-left: 12px;
+  font-size: 15px;
+  background-color: #FAFBFC;
+  color: rgba(41, 48, 64, .6);
+  width: 100%;
+  padding: 18px;
+  display: block;
+  white-space: nowrap;
+}
+
+.pagination {
+  margin-left: 12px;
+  font-size: 15px;
+  background-color: #FAFBFC;
+  color: rgba(41, 48, 64, .6);
+  width: 100%;
+  /*padding: 18px;*/
+  display: block;
+  white-space: nowrap;
+  margin-top: 18px;
 }
