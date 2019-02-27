@@ -778,7 +778,6 @@ const glew = {
         // .style("bottom", y(d.value.prev) - y(d.value.cur) + "px")
         .style('display', 'block')
         .html(function() {
-          console.log('D: ', d)
           return `
             <div class="popLineChart-tip-header">Details</div>
             <div class="popLineChart-tip-body">
