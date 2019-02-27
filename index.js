@@ -67,7 +67,7 @@ const glew = {
       divSelector = '#d3-bar',
       timeParseFormat = '%Y-%m-%d',
       timeFomat = '%b %e, %Y',
-      outterWidth = 1080,
+      outterWidth = 1150,
       outterHeight = 400,
     } = params;
 
@@ -520,7 +520,7 @@ const glew = {
       divSelector = '#d3-line',
       timeParseFormat = '%Y-%m-%d',
       timeFomat = '%b %e, %Y',
-      outterWidth = 1080,
+      outterWidth = 1150,
       outterHeight = 400,
     } = params;
 
