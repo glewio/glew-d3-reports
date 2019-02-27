@@ -563,7 +563,7 @@ const glew = {
     const width = outterWidth - margins.right - margins.left;
     const height = outterHeight - margins.top - margins.bottom;
 
-    // Set up the svg canvas by 
+    // Set up the svg canvas by
     // 1. selecting the div (by id)
     // 2. appending an SVG tag
     // 3. setting some attributes (width and height mandatory)
@@ -577,7 +577,7 @@ const glew = {
       .attr('class', 'chart-area')
       .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
-    // Overlay for finding mouse coordinates                
+    // Overlay for finding mouse coordinates
     svg.append("rect")
       .attr("transform", "translate(" + margins.left + "," + margins.top + ")")
       .attr("class", "overlay")
@@ -585,16 +585,21 @@ const glew = {
       .attr("height", height)
       .on("mouseover", function() {
         focus.style("display", null);
+        focus2.style('display', null);
       })
       .on("mouseout", function() {
         popLineChartTooltip.style("display", "none");
       })
-      .on("mousemove", mousemove);
+      .on("mousemove", mousemove)
 
 
-    // Tooltip code adapted from https://bl.ocks.org/alandunning/cfb7dcd7951826b9eacd54f0647f48d3                
+    // Tooltip code adapted from https://bl.ocks.org/alandunning/cfb7dcd7951826b9eacd54f0647f48d3
     let focus = chart.append("g")
-      .attr("class", "focus")
+      .attr("class", "pop-line-focus")
+      .style("display", "none");
+    
+    let focus2 = chart.append("g")
+      .attr("class", "pop-line-focus2")
       .style("display", "none");
 
     focus.append("line")
@@ -608,6 +613,11 @@ const glew = {
       .attr("x2", width);
 
     focus.append("circle")
+      .attr('class', 'focus-circle')
+      .attr("r", 7.5);
+      
+    focus2.append("circle")
+      .attr('class', 'focus2-circle')
       .attr("r", 7.5);
 
     focus.append("text")
@@ -655,7 +665,7 @@ const glew = {
 
 
 
-    // Generate axes onces scales have been set  
+    // Generate axes onces scales have been set
     xAxis.call(xAxisCall.scale(x))
     yAxis.call(yAxisCall.scale(y))
 
@@ -709,7 +719,7 @@ const glew = {
       let prevPoint = chart.selectAll('.prev-point')
         .data(data, d => d.x)
 
-      // prevPoint
+        // prevPoint
         .enter()
         .append('circle')
         .merge(curPoint)
@@ -769,7 +779,8 @@ const glew = {
       let d = x0 - d0.x > d1.x - x0 ? d1 : d0;
 
       focus.attr("transform", "translate(" + x(d.x) + 200 + "," + y(d.value.cur) + ")");
-      var coordinates= d3.mouse(this);
+      focus2.attr("transform", "translate(" + x(d.x) + 200 + "," + y(d.value.prev) + ")");
+      var coordinates = d3.mouse(this);
       const xPos = coordinates[0];
       const yPos2 = coordinates[1];
       popLineChartTooltip
@@ -797,16 +808,15 @@ const glew = {
       focus.select(".x-hover-line").attr("y2", height - y(d.value.cur));
       focus.select(".y-hover-line").attr("x2", width + width);
     }
-  },
-  
+  }
   createGlewTable: function (params = {}) {
-    
+
     const {
       queryName,
       columnMap,
       initialSort
     } = params;
-    
+
     if (queryName === undefined || columnMap ===  undefined) {
       // TODO: Have some better error handling here
       return;
@@ -897,7 +907,7 @@ const glew = {
 
           let formatted;
           if (type === 'currency') {
-            formatted = val.replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,") // Found this online.  
+            formatted = val.replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,") // Found this online.
           } else {
             formatted = val
           }
@@ -921,7 +931,7 @@ const glew = {
         setSelected(sortBy);
       }
     }
-  
+
     console.log('sortedRow: ', sortedRow)
     generateTable(displayData, sortedRow);
 
@@ -937,7 +947,7 @@ const glew = {
         // console.log('THIS: ', $(this))
         $(this).addClass('selected')
       });
-      
+
     }
 
     $('#page_number').change(function() {
@@ -960,6 +970,6 @@ const glew = {
       displayData = data.slice(start, num_results * selected_page);
       generateTable(displayData);
     });
-  },    
+  },
 }
 
