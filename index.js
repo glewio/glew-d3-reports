@@ -808,7 +808,7 @@ const glew = {
       focus.select(".x-hover-line").attr("y2", height - y(d.value.cur));
       focus.select(".y-hover-line").attr("x2", width + width);
     }
-  }
+  },
   createGlewTable: function (params = {}) {
 
     const {
