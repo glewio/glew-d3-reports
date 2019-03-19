@@ -597,7 +597,7 @@ const glew = {
     let focus = chart.append("g")
       .attr("class", "pop-line-focus")
       .style("display", "none");
-    
+
     let focus2 = chart.append("g")
       .attr("class", "pop-line-focus2")
       .style("display", "none");
@@ -615,7 +615,7 @@ const glew = {
     focus.append("circle")
       .attr('class', 'focus-circle')
       .attr("r", 7.5);
-      
+
     focus2.append("circle")
       .attr('class', 'focus2-circle')
       .attr("r", 7.5);
@@ -811,7 +811,7 @@ const glew = {
   },
 
   createGlewTable: function (params = {}) {
-
+    console.log('YO');
     const {
       queryName,
       columnMap,
@@ -858,14 +858,15 @@ const glew = {
             </select>
           </div>
         </div>
-      </div>    
-    </div>  
+      </div>
+    </div>
   `
 
     // Remove the Mode table contents and replace with our structure
     $(`#${tableId} .js-table-container`).empty();
     $(`#${tableId} .js-table-container`).append(tableSkeleton);
-    
+    console.log('HEYO');
+
     const columnObj = glew.getColumnsFromQuery(queryName);
     const columns = columnObj.map(c => c.name);
     const data = glew.getDataFromQuery(queryName);
