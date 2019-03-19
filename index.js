@@ -809,18 +809,63 @@ const glew = {
       focus.select(".y-hover-line").attr("x2", width + width);
     }
   },
+
   createGlewTable: function (params = {}) {
 
     const {
       queryName,
       columnMap,
-      initialSort
+      tableId,
+      initialSort,
     } = params;
 
     if (queryName === undefined || columnMap ===  undefined) {
       // TODO: Have some better error handling here
       return;
     }
+
+    const tableSkeleton = `
+      <div id="js-table">
+        <table>
+          <thead class="js-table-head">
+            <tr class="table-head-row"></tr>
+          </thead>
+          <tbody class="js-table-body"></tbody>
+        </table>
+      </div>
+      <div class="table_footer">
+        <div class="footer">
+          <div class="show_dropdown">
+            <span>Show</span>
+            <select id="num_results">
+              <option value="10">10</option>
+              <option selected="" value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+            </select>
+            <span>entries</span>
+          </div>
+          <div class="show_text">
+            <span>Showing</span>
+            <span id="entries_summary">Insert Stuff Here</span>
+            <span>entries</span>
+          </div>
+          <div class="pagination">
+            <span>Page</span>
+            <select id="page_number">
+              <option selected="" value="1">1</option>
+            </select>
+          </div>
+        </div>
+      </div>    
+    </div>  
+  `
+
+    // Remove the Mode table contents and replace with our structure
+    $(`#${tableId} .js-table-container`).empty();
+    $(`#${tableId} .js-table-container`).append(tableSkeleton);
+    
     const columnObj = glew.getColumnsFromQuery(queryName);
     const columns = columnObj.map(c => c.name);
     const data = glew.getDataFromQuery(queryName);
@@ -841,7 +886,7 @@ const glew = {
     let entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
     $("#entries_summary").text(entriesSummary)
 
-    columns.forEach(c => {
+    Object.keys(columnMap).forEach(c => {
       $('.table-head-row').append($(`
         <th class=${c}>
           <div class="layout-row">
@@ -898,19 +943,12 @@ const glew = {
       $('.js-table-body').children().remove();
       const t = data.map(r => {
         const row = Object.keys(r).map(d => {
-          const decimals = columnMap[d].decimals;
-          const type = columnMap[d].type;
-          const val = type === "string" ?
+          let format = columnMap[d].format || ',';
+          let fmt = d3.format(format);
+          let formatted = columnMap[d].type === 'text' ?
             r[d] :
-            `${type === "currency" ? "$" : ''}${parseFloat(r[d]).toFixed(decimals)}${type === 'percent' ? '%' : ''}`
+            fmt(r[d]);
 
-
-          let formatted;
-          if (type === 'currency') {
-            formatted = val.replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,") // Found this online.
-          } else {
-            formatted = val
-          }
           let td = `<td class="${d}"><div>${formatted}</div></td>`
           return td
         }).reduce((acc, cur) => {
@@ -920,9 +958,9 @@ const glew = {
         return row;
       }).reduce((acc, cur, i) => {
         if (i === 1) {
-          return `<tr>${acc}</tr><tr>${cur}</tr>`
+          return `<tr class='js-table-row first-row'>${acc}</tr><tr class='js-table-row'>${cur}</tr>`
         } else {
-          const row = `<tr>${cur}</tr>`
+          const row = `<tr class='js-table-row'>${cur}</tr>`
           return `${acc}${row}`
         }
       })
@@ -969,6 +1007,10 @@ const glew = {
       start = (selected_page - 1) * num_results;
       displayData = data.slice(start, num_results * selected_page);
       generateTable(displayData);
+      const pages = Math.ceil(data.length / num_results);
+      for (i = 2; i <= pages; i++) {
+        $('#page_number').append($("<option />").val(i).text(i));
+      }
     });
   },
 }
