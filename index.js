@@ -824,6 +824,8 @@ const glew = {
       return;
     }
 
+    console.log('TableID: ', tableId);
+
     const tableSkeleton = `
       <div id="js-table">
         <table>
