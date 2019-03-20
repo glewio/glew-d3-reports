@@ -817,6 +817,7 @@ const glew = {
       columnMap,
       tableId,
       initialSort,
+      removeTitle = false,
     } = params;
 
     if (queryName === undefined || columnMap ===  undefined) {
@@ -866,7 +867,7 @@ const glew = {
   `
 
     // Remove the Mode table contents and replace with our structure
-    $(`#${tableId} .js-chart-header`).remove();
+    if (removeTitle) $(`#${tableId} .js-chart-title`).remove();
     $(`#${tableId} .js-table-container`).empty();
     $(`#${tableId} .js-table-container`).append(tableSkeleton);
     console.log('HEYO');
