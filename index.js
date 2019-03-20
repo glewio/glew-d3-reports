@@ -908,7 +908,7 @@ const glew = {
     $('.table-head-row th').click((cell) => {
       console.log('Cell Clicked: ', $(cell));
       const cellClass = $(cell)[0].target.className;
-      const sortBy = cellClass.replace('selected', '').trim()
+      const sortBy = cellClass.replace('selected', '').replace('layout-row', '').trim()
       if (sortBy !== sortedRow) {
         // console.log('New Row to sort');
         sortedRow = sortBy;
