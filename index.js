@@ -893,7 +893,7 @@ const glew = {
     Object.keys(columnMap).forEach(c => {
       $('.table-head-row').append($(`
         <th class=${c}>
-          <div class="layout-row">
+          <div class="layout-row ${c}">
             <span class=${c}>${columnMap[c].display}</span>
             <div class="toggles">
               <i class="material-icons">arrow_drop_up</i>
