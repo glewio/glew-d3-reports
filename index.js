@@ -894,7 +894,7 @@ const glew = {
       $('.table-head-row').append($(`
         <th class=${c}>
           <div class="layout-row">
-            <span>${columnMap[c].display}</span>
+            <span class=${c}>${columnMap[c].display}</span>
             <div class="toggles">
               <i class="material-icons">arrow_drop_up</i>
               <i class="material-icons">arrow_drop_down</i>
