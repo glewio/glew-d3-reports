@@ -827,6 +827,7 @@ const glew = {
     console.log('TableID: ', tableId);
 
     const tableSkeleton = `
+    <div class='glew-table-container'>
       <div id="js-table">
         <table>
           <thead class="js-table-head">
