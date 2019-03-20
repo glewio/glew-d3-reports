@@ -866,6 +866,7 @@ const glew = {
   `
 
     // Remove the Mode table contents and replace with our structure
+    $(`#${tableId} .js-chart-header`).remove();
     $(`#${tableId} .js-table-container`).empty();
     $(`#${tableId} .js-table-container`).append(tableSkeleton);
     console.log('HEYO');
