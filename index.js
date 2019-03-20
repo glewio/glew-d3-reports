@@ -819,13 +819,12 @@ const glew = {
       initialSort,
       removeTitle = false,
     } = params;
+    console.log('RemoveTitle: ', removeTitle);
 
     if (queryName === undefined || columnMap ===  undefined) {
       // TODO: Have some better error handling here
       return;
     }
-
-    console.log('TableID: ', tableId);
 
     const tableSkeleton = `
     <div class='glew-table-container'>
@@ -867,7 +866,9 @@ const glew = {
   `
 
     // Remove the Mode table contents and replace with our structure
-    if (removeTitle) $(`#${tableId} .js-chart-title`).remove();
+    if (removeTitle) {
+      $(`#${tableId} .chart-title`).remove();
+    }
     $(`#${tableId} .js-table-container`).empty();
     $(`#${tableId} .js-table-container`).append(tableSkeleton);
     console.log('HEYO');
