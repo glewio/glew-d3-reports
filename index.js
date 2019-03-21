@@ -851,7 +851,7 @@ const glew = {
             <span id="entries_summary">Insert Stuff Here</span>
             <span>entries</span>
           </div>
-          <div class="pagination">
+          <div class="glew-pagination">
             <span>Page</span>
             <select id="page_number">
               <option selected="" value="1">1</option>
