@@ -811,7 +811,6 @@ const glew = {
   },
 
   createGlewTable: function (params = {}) {
-    console.log('Container!!!');
     const {
       queryName,
       columnMap,
@@ -819,7 +818,6 @@ const glew = {
       initialSort,
       removeTitle = false,
     } = params;
-    console.log('RemoveTitle: ', removeTitle);
 
     if (queryName === undefined || columnMap ===  undefined) {
       // TODO: Have some better error handling here
@@ -827,7 +825,6 @@ const glew = {
     }
 
     const tableSkeleton = `
-    <div class='glew-table-container'>
       <div id="js-table">
         <table>
           <thead class="js-table-head">
@@ -862,8 +859,7 @@ const glew = {
           </div>
         </div>
       </div>
-    </div>
-  `
+    `
 
     // Remove the Mode table contents and replace with our structure
     if (removeTitle) {
