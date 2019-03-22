@@ -811,12 +811,15 @@ const glew = {
   },
 
   createGlewTable: function (params = {}) {
-    const {
+   const {
       queryName,
       columnMap,
       tableId,
       initialSort,
       removeTitle = false,
+      displayTotals = false,
+      totalsData = [],
+      totalsLocation = 'bottom',
     } = params;
 
     if (queryName === undefined || columnMap ===  undefined) {
@@ -867,7 +870,6 @@ const glew = {
     }
     $(`#${tableId} .js-table-container`).empty();
     $(`#${tableId} .js-table-container`).append(tableSkeleton);
-    console.log('HEYO');
 
     const columnObj = glew.getColumnsFromQuery(queryName);
     const columns = columnObj.map(c => c.name);
@@ -909,7 +911,6 @@ const glew = {
       const cellClass = $(cell)[0].target.className;
       const sortBy = cellClass.replace('selected', '').replace('layout-row', '').trim()
       if (sortBy !== sortedRow) {
-        // console.log('New Row to sort');
         sortedRow = sortBy;
       }
 
@@ -935,17 +936,19 @@ const glew = {
           b[sortBy] - a[sortBy]
       });
       sortAscending = !sortAscending
-      // console.log('Sorted: ', sorted);
       generateTable(sorted, sortedRow);
 
     });
 
 
-    function generateTable(data, sortBy) {
+    function generateTable(data, sortBy, ) {
       console.log('sortBy: ', sortBy)
       $('.js-table-body').children().remove();
       const t = data.map(r => {
-        const row = Object.keys(r).map(d => {
+        console.log('R: ', r)
+        // const row = Object.keys(r).map(d => {
+        const row = Object.keys(columnMap).map(d => {
+          console.log('D: ', d)
           let format = columnMap[d].format || ',';
           let fmt = d3.format(format);
           let formatted = columnMap[d].type === 'text' ?
@@ -971,25 +974,61 @@ const glew = {
       if (sortBy !== null && sortBy !== undefined) {
         setSelected(sortBy);
       }
+      if (displayTotals) {
+        // TODO: Write a function that calculates totals if no data provided
+        addTotalsRow(totalsData);
+      }
+
     }
 
-    console.log('sortedRow: ', sortedRow)
     generateTable(displayData, sortedRow);
 
     function setSelected(selection) {
-      // console.log('SEttting Selected: ', selection)
       const dir = sortAscending ? 'sort_desc' : 'sort_asc';
-      // console.log('Cell: ', $(cell)[0]);
       $('.selected').removeClass('selected');
-      console.log('DIR: ', dir)
-      console.log('FML: ', $(`tbody thead .${selection}`).addClass(dir))
-      // $(`tbody thead .${selection}`).addClass(dir)
       $(`.${selection}`).each(function() {
-        // console.log('THIS: ', $(this))
         $(this).addClass('selected')
       });
 
     }
+
+    function addTotalsRow(totalsAr) {
+      $('.js-table-body').children();
+      const t = totalsAr.map((r, i) => {
+        const row = Object.keys(r).map(d => {
+          let format = columnMap[d].format || ',';
+          let fmt = d3.format(format);
+          let formatted = columnMap[d].type === 'text' ?
+            r[d] :
+            fmt(r[d]);
+          let td = `<td class="totals ${d}"><div>${formatted}</div></td>`
+          return td
+        }).reduce((acc, cur) => {
+          return `${acc}${cur}`
+        })
+        return row;
+      }).reduce((acc, cur, i) => {
+        if (i === 1) {
+          return `<tr>${acc}</tr><tr>${cur}</tr>`
+        } else {
+          const row = `<tr>${cur}</tr>`
+          return `${acc}${row}`
+        }
+      })
+      if (totalsLocation === 'bottom') {
+        // Add totals to the bottom
+        $('.js-table-body').append(t)
+      } else {
+        // table = $(id + " .main-table")
+        // container = $(id + " .js-table-content-container")
+        // var firstRow = table.find("tr:first")
+        // var totalRow = makeRow(totals)
+        // var tableHeight = container.css("height")
+        // var tableHeightInt = +tableHeight.match(/\d+/)[0]
+        // firstRow.after(totalRow)
+      }
+    }
+
 
     $('#page_number').change(function() {
       selected_page = $('#page_number').val();
