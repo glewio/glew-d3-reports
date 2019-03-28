@@ -907,7 +907,6 @@ const glew = {
     });
 
     $('.table-head-row th').click((cell) => {
-      console.log('Cell Clicked: ', $(cell));
       const cellClass = $(cell)[0].target.className;
       const sortBy = cellClass.replace('selected', '').replace('layout-row', '').trim()
       if (sortBy !== sortedRow) {
@@ -942,13 +941,10 @@ const glew = {
 
 
     function generateTable(data, sortBy, ) {
-      console.log('sortBy: ', sortBy)
       $('.js-table-body').children().remove();
       const t = data.map(r => {
-        console.log('R: ', r)
         // const row = Object.keys(r).map(d => {
         const row = Object.keys(columnMap).map(d => {
-          console.log('D: ', d)
           let format = columnMap[d].format || ',';
           let fmt = d3.format(format);
           let formatted = columnMap[d].type === 'text' ?
