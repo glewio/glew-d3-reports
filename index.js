@@ -823,7 +823,7 @@ const glew = {
       totalsLocation = 'bottom',
     } = params;
 
-    if (queryName === undefined || columnMap ===  undefined) {
+    if ((queryName === undefined && initialData === undefined) || columnMap ===  undefined) {
       // TODO: Have some better error handling here
       return;
     }
