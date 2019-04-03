@@ -813,6 +813,7 @@ const glew = {
   createGlewTable: function (params = {}) {
    const {
       queryName,
+      initialData,
       columnMap,
       tableId,
       initialSort,
@@ -873,7 +874,9 @@ const glew = {
 
     const columnObj = glew.getColumnsFromQuery(queryName);
     const columns = columnObj.map(c => c.name);
-    const data = glew.getDataFromQuery(queryName);
+    const data = initialData
+      ? initialData
+      : glew.getDataFromQuery(queryName);
     let totalResults = data.length;
     let sortAscending = true;
     let num_results = $('#num_results').val()
