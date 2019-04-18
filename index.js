@@ -811,6 +811,22 @@ const glew = {
   },
 
   createGlewTable: function (params = {}) {
+    if (params === 'Define Params') {
+      console.log({
+        queryName: 'String: The name of the Mode query returning the data you want to use to generate the report',
+        initialData: 'Array: If you want to pass in your dataset rather than the query name',
+        columnMap: 'Object: An object of the format { query_column_header: { display: "Desired Column Header", type: "Optional, mainly used if value is string or date", format: "format of value from d3.format (if param IS NOT A DATE), currentFormat: "Only used if type: date.  d3.timeParse format used to parse a string to a date object", displayFomat: "Only used if type: date.  d3.timeFormat format used to convert date object to string.',
+        tableId: 'String: TableID of Mode table that you\'re targeting ',
+        initialSort: 'String: The initial column to sort on',
+        removeTitle: 'Bool: If you want to remove the Mode table title',
+        displayTotals: 'Bool: If you want to display totals',
+        totalsData: 'Array: Totals data to display',
+        totalsLocation: 'Enum (bottom, top): IF you want to have the totals at the bottom or top of the table',
+      });
+      return;
+    }
+
+
    const {
       queryName,
       initialData,
@@ -932,10 +948,19 @@ const glew = {
               1 :
               -1
           }
+        } else if (type === 'date') {
+            const parseTime = d3.timeParse(columnMap[sortBy].currentFormat);
+            const formatTime = d3.timeFormat(columnMap[sortBy].displayFormat);
+            const aparsed = parseTime(a[sortBy])
+            const bparsed = parseTime(b[sortBy])
+          return sortAscending
+            ? aparsed - bparsed
+            : bparsed - aparsed
+        } else {
+          return sortAscending
+            ? a[sortBy] - b[sortBy]
+            : b[sortBy] - a[sortBy]
         }
-        return sortAscending ?
-          a[sortBy] - b[sortBy] :
-          b[sortBy] - a[sortBy]
       });
       sortAscending = !sortAscending
       generateTable(sorted, sortedRow);
@@ -949,10 +974,20 @@ const glew = {
         // const row = Object.keys(r).map(d => {
         const row = Object.keys(columnMap).map(d => {
           let format = columnMap[d].format || ',';
-          let fmt = d3.format(format);
-          let formatted = columnMap[d].type === 'text' ?
-            r[d] :
-            fmt(r[d]);
+          let fmt;
+          let formatted
+          if (columnMap[d].type === 'date') {
+            const parseTime = d3.timeParse(columnMap[d].currentFormat);
+            const formatTime = d3.timeFormat(columnMap[d].displayFormat);
+            const parsed = parseTime(r[d])
+            formatted = formatTime(parsed);
+
+          } else {
+            fmt = d3.format(format);
+            formatted = columnMap[d].type === 'text' ?
+              r[d] :
+              fmt(r[d]);
+          }
 
           let td = `<td class="${d}"><div>${formatted}</div></td>`
           return td
