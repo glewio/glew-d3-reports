@@ -1100,8 +1100,8 @@ const glew = {
         center: 'String: The metric (ie column) in the query that you\'re targeting. This will also be the title of the card',
         topLeft: 'Obj w/ params row(String) and label(String).  The Row is the row you\'re trageting in the query and the Label is what text you want displayed on the card below the metric',
         topRight: 'Obj w/ params row(String) and label(String).  The Row is the row you\'re trageting in the query and the Label is what text you want displayed on the card below the metric',
-        bottomLeft: 'Obj w/ params row(String) and label(String) and optional fmt(String).  The Row is the row you\'re trageting in the query, the Label is what text you want displayed on the card below the metric and the fmt, if present (and bottomFmt is null) is the formatting applied to the value,
-        bottomRight: 'Obj w/ params row(String) and label(String) and optional fmt(String).  The Row is the row you\'re trageting in the query, the Label is what text you want displayed on the card below the metric and the fmt, if present (and bottomFmt is null) is the formatting applied to the value,
+        bottomLeft: 'Obj w/ params row(String) and label(String) and optional fmt(String).  The Row is the row you\'re trageting in the query, the Label is what text you want displayed on the card below the metric and the fmt, if present (and bottomFmt is null) is the formatting applied to the value',
+        bottomRight: 'Obj w/ params row(String) and label(String) and optional fmt(String).  The Row is the row you\'re trageting in the query, the Label is what text you want displayed on the card below the metric and the fmt, if present (and bottomFmt is null) is the formatting applied to the value',
       });
       return;
     }
