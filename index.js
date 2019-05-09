@@ -1089,5 +1089,90 @@ const glew = {
       }
     });
   },
+
+  createGlewCard: function (params = {}) {
+    if (params === 'Define Params' || params == {}) {
+      console.log({
+        queryName: 'String: The name of the Mode query returning the data you want to use to generate the report',
+        fmt: 'String: The d3 format you want for the Center, Top Left and Top Right metrics',
+        bottomFormat: 'String: The d3 format you want for the Bottom Left and Bottom Right metrics. If you want to define these individually, you can do so in the bottomLeft and bottomRight objects',
+        chartId: 'String: ChartID of Mode Big Number that you\'re targeting ',
+        center: 'String: The metric (ie column) in the query that you\'re targeting. This will also be the title of the card',
+        topLeft: 'Obj w/ params row(String) and label(String).  The Row is the row you\'re trageting in the query and the Label is what text you want displayed on the card below the metric',
+        topRight: 'Obj w/ params row(String) and label(String).  The Row is the row you\'re trageting in the query and the Label is what text you want displayed on the card below the metric',
+        bottomLeft: 'Obj w/ params row(String) and label(String) and optional fmt(String).  The Row is the row you\'re trageting in the query, the Label is what text you want displayed on the card below the metric and the fmt, if present (and bottomFmt is null) is the formatting applied to the value,
+        bottomRight: 'Obj w/ params row(String) and label(String) and optional fmt(String).  The Row is the row you\'re trageting in the query, the Label is what text you want displayed on the card below the metric and the fmt, if present (and bottomFmt is null) is the formatting applied to the value,
+      });
+      return;
+    }
+    const cardFmt = metricMap.fmt;
+    const bottomFmt = metricMap.bottomFormat;
+    const bfmt = bottomFmt && d3.format(bottomFmt);
+    const fmt = d3.format(cardFmt);
+    const rawData = datasets.find(d => d.queryName === metricMap.queryName)
+    const data = rawData.content
+    const cardMetric = metricMap.center
+
+    // Center
+    const centerMetric = data.find(d => d.period === data_through)[cardMetric]
+    const centerMetricFormatted = fmt(centerMetric)
+
+    // Top Left
+    const topLeft = data.find(d => d.period === metricMap.topLeft.row)[cardMetric]
+    const topLeftFormatted = cardFmt ? fmt(topLeft) : d3.format(metricMap.topLeft.fmt)(topLeft)
+
+    // Bottom Left
+    const bottomLeft = data.find(d => d.period === metricMap.bottomLeft.row)[cardMetric]
+    const bottomLeftFormatted = bfmt ? bfmt(bottomLeft) : d3.format(metricMap.bottomLeft.fmt)(bottomLeft)
+
+    // Top Right
+    const topRight = data.find(d => d.period === metricMap.topRight.row)[cardMetric]
+    const topRightFormatted = cardFmt ? fmt(topRight) : d3.format(metricMap.topRight.fmt)(topRight)
+
+    // Bottom Right
+    const bottomRight = data.find(d => d.period === metricMap.bottomRight.row)[cardMetric]
+    const bottomRightFormatted = bfmt ? bfmt(bottomRight) : d3.format(metricMap.bottomRight.fmt)(bottomRight)
+
+    const cardTitle = cardMetric.toUpperCase()
+    const cardString = `
+      <div class = "glew-ban-container">
+        <div class="title-row">
+          <div class="title card-title">${cardTitle}</div>
+        </div>
+        <div class="row centerMetric-value">
+          ${centerMetricFormatted}
+        </div>
+        <div class="row to-date">
+          <div class="topLeft-container">
+            <div class="topLeft-val mid-row-val">${topLeftFormatted}</div>
+            <div class="topLeft-text card-row-text">${metricMap.topLeft.label}</div>
+          </div>
+          <div class="topRight-container">
+            <div class="topRight-val mid-row-val">${topRightFormatted}</div>
+            <div class="topRight-text card-row-text">${metricMap.topRight.label}</div>
+          </div>
+        </div>
+        <div class="row last-row">
+          <div class="bottom-left-container">
+            <div class="bottom-left-val">
+              <img src=${bottomLeft >= 0 ? upArrow : downArrow} class='bottom-left-arrow' alt width='11'>
+              <span class="bottom-left-val-span ${bottomLeft >= 0 ? 'up-val' : 'down-val'}">${bottomLeftFormatted}</span>
+            </div>
+            <div class="bottom-left-text card-row-text">${metricMap.bottomLeft.label}</div>
+          </div>
+          <div class="bottom-right-container">
+            <div class="bottom-right">
+              <img src=${bottomRight >= 0 ? upArrow : downArrow} class='avg-arrow' alt width='11'>
+              <span class="bottom-right-span ${bottomRight >= 0 ? 'up-val' : 'down-val'}">${bottomRightFormatted}</span>
+            </div>
+            <div class="bottom-right card-row-text">${metricMap.bottomRight.label}</div>
+          </div>
+        </div>
+      </div>
+    `
+    $(`#${metricMap.chartId} .chart-big-number`).empty()
+    $(`#${metricMap.chartId} .chart-big-number`).append(cardString)
+  },
+
 }
 
