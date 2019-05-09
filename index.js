@@ -1105,33 +1105,33 @@ const glew = {
       });
       return;
     }
-    const cardFmt = metricMap.fmt;
-    const bottomFmt = metricMap.bottomFormat;
+    const cardFmt = params.fmt;
+    const bottomFmt = params.bottomFormat;
     const bfmt = bottomFmt && d3.format(bottomFmt);
     const fmt = d3.format(cardFmt);
-    const rawData = datasets.find(d => d.queryName === metricMap.queryName)
+    const rawData = datasets.find(d => d.queryName === params.queryName)
     const data = rawData.content
-    const cardMetric = metricMap.center
+    const cardMetric = params.center
 
     // Center
     const centerMetric = data.find(d => d.period === data_through)[cardMetric]
     const centerMetricFormatted = fmt(centerMetric)
 
     // Top Left
-    const topLeft = data.find(d => d.period === metricMap.topLeft.row)[cardMetric]
-    const topLeftFormatted = cardFmt ? fmt(topLeft) : d3.format(metricMap.topLeft.fmt)(topLeft)
+    const topLeft = data.find(d => d.period === params.topLeft.row)[cardMetric]
+    const topLeftFormatted = cardFmt ? fmt(topLeft) : d3.format(params.topLeft.fmt)(topLeft)
 
     // Bottom Left
-    const bottomLeft = data.find(d => d.period === metricMap.bottomLeft.row)[cardMetric]
-    const bottomLeftFormatted = bfmt ? bfmt(bottomLeft) : d3.format(metricMap.bottomLeft.fmt)(bottomLeft)
+    const bottomLeft = data.find(d => d.period === params.bottomLeft.row)[cardMetric]
+    const bottomLeftFormatted = bfmt ? bfmt(bottomLeft) : d3.format(params.bottomLeft.fmt)(bottomLeft)
 
     // Top Right
-    const topRight = data.find(d => d.period === metricMap.topRight.row)[cardMetric]
-    const topRightFormatted = cardFmt ? fmt(topRight) : d3.format(metricMap.topRight.fmt)(topRight)
+    const topRight = data.find(d => d.period === params.topRight.row)[cardMetric]
+    const topRightFormatted = cardFmt ? fmt(topRight) : d3.format(params.topRight.fmt)(topRight)
 
     // Bottom Right
-    const bottomRight = data.find(d => d.period === metricMap.bottomRight.row)[cardMetric]
-    const bottomRightFormatted = bfmt ? bfmt(bottomRight) : d3.format(metricMap.bottomRight.fmt)(bottomRight)
+    const bottomRight = data.find(d => d.period === params.bottomRight.row)[cardMetric]
+    const bottomRightFormatted = bfmt ? bfmt(bottomRight) : d3.format(params.bottomRight.fmt)(bottomRight)
 
     const cardTitle = cardMetric.toUpperCase()
     const cardString = `
@@ -1145,11 +1145,11 @@ const glew = {
         <div class="row to-date">
           <div class="topLeft-container">
             <div class="topLeft-val mid-row-val">${topLeftFormatted}</div>
-            <div class="topLeft-text card-row-text">${metricMap.topLeft.label}</div>
+            <div class="topLeft-text card-row-text">${params.topLeft.label}</div>
           </div>
           <div class="topRight-container">
             <div class="topRight-val mid-row-val">${topRightFormatted}</div>
-            <div class="topRight-text card-row-text">${metricMap.topRight.label}</div>
+            <div class="topRight-text card-row-text">${params.topRight.label}</div>
           </div>
         </div>
         <div class="row last-row">
@@ -1158,21 +1158,20 @@ const glew = {
               <img src=${bottomLeft >= 0 ? upArrow : downArrow} class='bottom-left-arrow' alt width='11'>
               <span class="bottom-left-val-span ${bottomLeft >= 0 ? 'up-val' : 'down-val'}">${bottomLeftFormatted}</span>
             </div>
-            <div class="bottom-left-text card-row-text">${metricMap.bottomLeft.label}</div>
+            <div class="bottom-left-text card-row-text">${params.bottomLeft.label}</div>
           </div>
           <div class="bottom-right-container">
             <div class="bottom-right">
               <img src=${bottomRight >= 0 ? upArrow : downArrow} class='avg-arrow' alt width='11'>
               <span class="bottom-right-span ${bottomRight >= 0 ? 'up-val' : 'down-val'}">${bottomRightFormatted}</span>
             </div>
-            <div class="bottom-right card-row-text">${metricMap.bottomRight.label}</div>
+            <div class="bottom-right card-row-text">${params.bottomRight.label}</div>
           </div>
         </div>
       </div>
     `
-    $(`#${metricMap.chartId} .chart-big-number`).empty()
-    $(`#${metricMap.chartId} .chart-big-number`).append(cardString)
+    $(`#${params.chartId} .chart-big-number`).empty()
+    $(`#${params.chartId} .chart-big-number`).append(cardString)
   },
-
 }
 
