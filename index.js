@@ -1090,7 +1090,7 @@ const glew = {
     });
   },
 
-  createGlewCard: function (params = {}) {
+  createGlewCard: function(params = {}) {
     if (params === 'Define Params' || params == {}) {
       console.log({
         queryName: 'String: The name of the Mode query returning the data you want to use to generate the report',
@@ -1111,10 +1111,10 @@ const glew = {
     const fmt = d3.format(cardFmt);
     const rawData = datasets.find(d => d.queryName === params.queryName)
     const data = rawData.content
-    const cardMetric = params.center
+    const cardMetric = params.column
 
     // Center
-    const centerMetric = data.find(d => d.period === data_through)[cardMetric]
+    const centerMetric = data.find(d => d.period === params.center.row)[cardMetric]
     const centerMetricFormatted = fmt(centerMetric)
 
     // Top Left
@@ -1133,7 +1133,7 @@ const glew = {
     const bottomRight = data.find(d => d.period === params.bottomRight.row)[cardMetric]
     const bottomRightFormatted = bfmt ? bfmt(bottomRight) : d3.format(params.bottomRight.fmt)(bottomRight)
 
-    const cardTitle = cardMetric.toUpperCase()
+    const cardTitle = params.cardTitle
     const cardString = `
       <div class = "glew-ban-container">
         <div class="title-row">
