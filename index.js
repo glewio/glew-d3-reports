@@ -1173,5 +1173,284 @@ const glew = {
     $(`#${params.chartId} .chart-big-number`).empty()
     $(`#${params.chartId} .chart-big-number`).append(cardString)
   },
+
+  createGlewTable2: function (params = {}) {
+    if (params === 'Define Params') {
+      console.log({
+        queryName: 'String: The name of the Mode query returning the data you want to use to generate the report',
+        initialData: 'Array: If you want to pass in your dataset rather than the query name',
+        columnMap: 'Object: An object of the format { query_column_header: { display: "Desired Column Header", type: "Optional, mainly used if value is string or date", format: "format of value from d3.format (if param IS NOT A DATE), currentFormat: "Only used if type: date.  d3.timeParse format used to parse a string to a date object", displayFomat: "Only used if type: date.  d3.timeFormat format used to convert date object to string.',
+        tableId: 'String: TableID of Mode table that you\'re targeting ',
+        initialSort: 'String: The initial column to sort on',
+        removeTitle: 'Bool: If you want to remove the Mode table title',
+        displayTotals: 'Bool: If you want to display totals',
+        totalsData: 'Array: Totals data to display',
+        totalsLocation: 'Enum (bottom, top): IF you want to have the totals at the bottom or top of the table',
+      });
+      return;
+    }
+
+
+   const {
+      queryName,
+      initialData,
+      columnMap,
+      tableId,
+      initialSort,
+      removeTitle = false,
+      displayTotals = false,
+      totalsData = [],
+      totalsLocation = 'bottom',
+    } = params;
+
+    if ((queryName === undefined && initialData === undefined) || columnMap ===  undefined) {
+      // TODO: Have some better error handling here
+      return;
+    }
+
+    const tableSkeleton = `
+      <div id="js-table">
+        <table>
+          <thead class="js-table-head">
+            <tr class="table-head-row"></tr>
+          </thead>
+          <tbody class="js-table-body"></tbody>
+        </table>
+      </div>
+      <div class="table_footer">
+        <div class="footer">
+          <div class="show_dropdown">
+            <span>Show</span>
+            <select id="num_results">
+              <option value="10">10</option>
+              <option selected="" value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+            </select>
+            <span>entries</span>
+          </div>
+          <div class="show_text">
+            <span>Showing</span>
+            <span id="entries_summary">Insert Stuff Here</span>
+            <span>entries</span>
+          </div>
+          <div class="glew-pagination">
+            <span>Page</span>
+            <select id="page_number">
+              <option selected="" value="1">1</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    `
+
+    // Remove the Mode table contents and replace with our structure
+    if (removeTitle) {
+      $(`#${tableId} .chart-header`).remove();
+    }
+    $(`#${tableId} .js-table-container`).empty();
+    $(`#${tableId} .js-table-container`).append(tableSkeleton);
+
+    const columnObj = glew.getColumnsFromQuery(queryName);
+    const columns = columnObj.map(c => c.name);
+    const data = initialData
+      ? initialData
+      : glew.getDataFromQuery(queryName);
+    let totalResults = data.length;
+    let sortAscending = true;
+    let num_results = $('#num_results').val()
+    const pages = data.length / num_results;
+    let selected_page = $('#page_number').val();
+    let start = (selected_page - 1) * num_results;
+    let displayData = data.slice(start, num_results * selected_page);
+    let sortedRow = initialSort
+    // Set the number of available pages
+    for (i = 2; i <= pages; i++) {
+      $('#page_number').append($("<option />").val(i).text(i));
+    }
+    let startResults = (selected_page - 1) * +num_results;
+    let endResults = +selected_page * +num_results;
+    let entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
+    $("#entries_summary").text(entriesSummary)
+
+    function addClickHandler(columnMap, data, tableId) {
+      $(`#${tableId} .table-head-row th`).click((cell) => {
+        const cellClass = $(cell)[0].target.className;
+        const sortBy = cellClass.replace('selected', '').replace('layout-row', '').trim()
+        if (sortBy !== sortedRow) {
+          sortedRow = sortBy;
+        }
+        const sorted = data.sort((a, b) => {
+          const type = columnMap[sortBy].type
+          if (type === 'string') {
+            const aName = a[sortBy].toUpperCase();
+            const bName = b[sortBy].toUpperCase();
+
+            if (aName < bName) {
+              return sortAscending ?
+                -1 :
+                1
+            }
+            if (aName >= bName) {
+              return sortAscending ?
+                1 :
+                -1
+            }
+          } else if (type === 'date') {
+              const parseTime = d3.timeParse(columnMap[sortBy].currentFormat);
+              const formatTime = d3.timeFormat(columnMap[sortBy].displayFormat);
+              const aparsed = parseTime(a[sortBy])
+              const bparsed = parseTime(b[sortBy])
+            return sortAscending
+              ? aparsed - bparsed
+              : bparsed - aparsed
+          } else {
+            return sortAscending
+              ? a[sortBy] - b[sortBy]
+              : b[sortBy] - a[sortBy]
+          }
+        });
+        sortAscending = !sortAscending
+        generateTable(sorted, sortedRow, tableId);
+      });
+    }
+
+
+    function generateTable(data, sortBy, tableId) {
+      const tableHeader = Object.keys(columnMap).reduce((acc, cur) => {
+          let curRow = `<th class=${cur}>
+            <div class="layout-row ${cur}">
+              <span class=${cur}>${columnMap[cur].display}</span>
+              <div class="toggles">
+                <i class="material-icons">arrow_drop_up</i>
+                <i class="material-icons">arrow_drop_down</i>
+              </div>
+            </div>
+          </th>`
+          return `${acc}${curRow}`
+      }, '');
+      $(`#${tableId} .table-head-row`).append($(tableHeader));
+      $(`#${tableId} .js-table-body`).children().remove();
+      const t = data.map(r => {
+        // const row = Object.keys(r).map(d => {
+        const row = Object.keys(columnMap).map(d => {
+          let format = columnMap[d].format || ',';
+          let fmt;
+          let formatted
+          if (columnMap[d].type === 'date') {
+            const parseTime = d3.timeParse(columnMap[d].currentFormat);
+            const formatTime = d3.timeFormat(columnMap[d].displayFormat);
+            const parsed = parseTime(r[d])
+            formatted = formatTime(parsed);
+
+          } else {
+            fmt = d3.format(format);
+            formatted = columnMap[d].type === 'text' ?
+              r[d] :
+              fmt(r[d]);
+          }
+
+          let td = `<td class="${d}"><div>${formatted}</div></td>`
+          return td
+        }).reduce((acc, cur) => {
+          return `${acc}${cur}`
+        })
+        return row;
+      }).reduce((acc, cur, i) => {
+        if (i === 1) {
+          return `<tr class='js-table-row first-row'>${acc}</tr><tr class='js-table-row'>${cur}</tr>`
+        } else {
+          const row = `<tr class='js-table-row'>${cur}</tr>`
+          return `${acc}${row}`
+        }
+      })
+      $(`#${tableId} .js-table-body`).append(t)
+      if (sortBy !== null && sortBy !== undefined) {
+        setSelected(sortBy, tableId);
+      }
+      if (displayTotals) {
+        // TODO: Write a function that calculates totals if no data provided
+        addTotalsRow(totalsData, tableId);
+      }
+
+    }
+
+    generateTable(displayData, sortedRow, tableId);
+    addClickHandler(columnMap, displayData, tableId);
+
+    function setSelected(selection, tableId) {
+      const dir = sortAscending ? 'sort_desc' : 'sort_asc';
+      $(`#${tableId} .selected`).removeClass('selected');
+      $(`#${tableId} .${selection}`).each(function() {
+        $(this).addClass('selected')
+      });
+
+    }
+
+    function addTotalsRow(totalsAr, tableId) {
+      $(`#${tableId} .js-table-body`).children();
+      const t = totalsAr.map((r, i) => {
+        const row = Object.keys(r).map(d => {
+          let format = columnMap[d].format || ',';
+          let fmt = d3.format(format);
+          let formatted = columnMap[d].type === 'text' ?
+            r[d] :
+            fmt(r[d]);
+          let td = `<td class="totals ${d}"><div>${formatted}</div></td>`
+          return td
+        }).reduce((acc, cur) => {
+          return `${acc}${cur}`
+        })
+        return row;
+      }).reduce((acc, cur, i) => {
+        if (i === 1) {
+          return `<tr>${acc}</tr><tr>${cur}</tr>`
+        } else {
+          const row = `<tr>${cur}</tr>`
+          return `${acc}${row}`
+        }
+      })
+      if (totalsLocation === 'bottom') {
+        // Add totals to the bottom
+        $(`#${tableId} .js-table-body`).append(t)
+      } else {
+        // table = $(id + " .main-table")
+        // container = $(id + " .js-table-content-container")
+        // var firstRow = table.find("tr:first")
+        // var totalRow = makeRow(totals)
+        // var tableHeight = container.css("height")
+        // var tableHeightInt = +tableHeight.match(/\d+/)[0]
+        // firstRow.after(totalRow)
+      }
+    }
+
+
+    $('#page_number').change(function() {
+      selected_page = $('#page_number').val();
+      num_results = $('#num_results').val()
+      endResults = +selected_page * +num_results;
+      entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
+      $("#entries_summary").text(entriesSummary)
+      start = (selected_page - 1) * num_results;
+      displayData = data.slice(start, num_results * selected_page);
+      generateTable(displayData);
+    });
+    $('#num_results').change(function() {
+      selected_page = $('#page_number').val();
+      num_results = $('#num_results').val();
+      endResults = +selected_page * +num_results;
+      entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
+      $("#entries_summary").text(entriesSummary)
+      start = (selected_page - 1) * num_results;
+      displayData = data.slice(start, num_results * selected_page);
+      generateTable(displayData);
+      const pages = Math.ceil(data.length / num_results);
+      for (i = 2; i <= pages; i++) {
+        $('#page_number').append($("<option />").val(i).text(i));
+      }
+    });
+  },
+
 }
 
