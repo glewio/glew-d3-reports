@@ -1316,8 +1316,7 @@ const glew = {
       });
     }
 
-
-    function generateTable(data, sortBy, tableId) {
+    function createHeader(columnMap, tableId) {
       const tableHeader = Object.keys(columnMap).reduce((acc, cur) => {
           let curRow = `<th class=${cur}>
             <div class="layout-row ${cur}">
@@ -1327,10 +1326,14 @@ const glew = {
                 <i class="material-icons">arrow_drop_down</i>
               </div>
             </div>
-          </th>`
+          </th>`        
           return `${acc}${curRow}`
       }, '');
-      $(`#${tableId} .table-head-row`).append($(tableHeader));
+      console.log('TableHeader: ', tableHeader)
+      $(`#${tableId} .table-head-row`).append($(tableHeader));      
+    }
+
+    function generateTable(data, sortBy, tableId) {
       $(`#${tableId} .js-table-body`).children().remove();
       const t = data.map(r => {
         // const row = Object.keys(r).map(d => {
@@ -1376,6 +1379,7 @@ const glew = {
 
     }
 
+    createHeader(columnMap, tableId);
     generateTable(displayData, sortedRow, tableId);
     addClickHandler(columnMap, displayData, tableId);
 
