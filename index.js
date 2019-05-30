@@ -1283,7 +1283,7 @@ const glew = {
         }
         const sorted = data.sort((a, b) => {
           const type = columnMap[sortBy].type
-          if (type === 'string') {
+          if (type === 'text') {
             const aName = a[sortBy].toUpperCase();
             const bName = b[sortBy].toUpperCase();
 
@@ -1326,11 +1326,11 @@ const glew = {
                 <i class="material-icons">arrow_drop_down</i>
               </div>
             </div>
-          </th>`        
+          </th>`
           return `${acc}${curRow}`
       }, '');
       console.log('TableHeader: ', tableHeader)
-      $(`#${tableId} .table-head-row`).append($(tableHeader));      
+      $(`#${tableId} .table-head-row`).append($(tableHeader));
     }
 
     function generateTable(data, sortBy, tableId) {
