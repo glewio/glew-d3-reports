@@ -1447,11 +1447,13 @@ const glew = {
       num_results = $('#num_results').val();
       let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
       let sortCol = selectedRow.replace('selected', '')
+      console.log('SortCol: ', sortCol);
       endResults = +selected_page * +num_results;
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
       updatedData = data.slice(start, num_results * selected_page);
+      console.log('UpdatedData: ', updatedData);
       generateTable(updatedData, sortCol, tableId);
       const pages = Math.ceil(data.length / num_results);
       for (i = 2; i <= pages; i++) {
