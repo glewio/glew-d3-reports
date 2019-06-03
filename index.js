@@ -1434,21 +1434,25 @@ const glew = {
       selected_page = $('#page_number').val();
       num_results = $('#num_results').val()
       endResults = +selected_page * +num_results;
+      let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
+      let sortCol = selectedRow.replace('selected', '')
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
-      displayData = data.slice(start, num_results * selected_page);
-      generateTable(displayData);
+      updatedData = data.slice(start, num_results * selected_page);
+      generateTable(updatedData, sortCol, tableId);
     });
     $('#num_results').change(function() {
       selected_page = $('#page_number').val();
       num_results = $('#num_results').val();
       endResults = +selected_page * +num_results;
+      let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
+      let sortCol = selectedRow.replace('selected', '')
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
-      displayData = data.slice(start, num_results * selected_page);
-      generateTable(displayData);
+      updatedData = data.slice(start, num_results * selected_page);
+      generateTable(updatedData, sortCol, tableId);
       const pages = Math.ceil(data.length / num_results);
       for (i = 2; i <= pages; i++) {
         $('#page_number').append($("<option />").val(i).text(i));
