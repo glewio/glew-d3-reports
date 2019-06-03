@@ -1174,7 +1174,7 @@ const glew = {
     $(`#${params.chartId} .chart-big-number`).append(cardString)
   },
 
-  createGlewTable2: function (params = {}) {
+  createGlewTable2: function(params = {}) {
     if (params === 'Define Params') {
       console.log({
         queryName: 'String: The name of the Mode query returning the data you want to use to generate the report',
@@ -1191,7 +1191,7 @@ const glew = {
     }
 
 
-   const {
+    const {
       queryName,
       initialData,
       columnMap,
@@ -1203,47 +1203,47 @@ const glew = {
       totalsLocation = 'bottom',
     } = params;
 
-    if ((queryName === undefined && initialData === undefined) || columnMap ===  undefined) {
+    if ((queryName === undefined && initialData === undefined) || columnMap === undefined) {
       // TODO: Have some better error handling here
       return;
     }
 
     const tableSkeleton = `
-      <div id="js-table">
-        <table>
-          <thead class="js-table-head">
-            <tr class="table-head-row"></tr>
-          </thead>
-          <tbody class="js-table-body"></tbody>
-        </table>
-      </div>
-      <div class="table_footer">
-        <div class="footer">
-          <div class="show_dropdown">
-            <span>Show</span>
-            <select id="num_results">
-              <option value="10">10</option>
-              <option selected="" value="20">20</option>
-              <option value="30">30</option>
-              <option value="40">40</option>
-              <option value="50">50</option>
-            </select>
-            <span>entries</span>
-          </div>
-          <div class="show_text">
-            <span>Showing</span>
-            <span id="entries_summary">Insert Stuff Here</span>
-            <span>entries</span>
-          </div>
-          <div class="glew-pagination">
-            <span>Page</span>
-            <select id="page_number">
-              <option selected="" value="1">1</option>
-            </select>
-          </div>
+    <div id="js-table">
+      <table>
+        <thead class="js-table-head">
+          <tr class="table-head-row"></tr>
+        </thead>
+        <tbody class="js-table-body"></tbody>
+      </table>
+    </div>
+    <div class="table_footer">
+      <div class="footer">
+        <div class="show_dropdown">
+          <span>Show</span>
+          <select id="num_results">
+            <option value="10">10</option>
+            <option selected="" value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+          </select>
+          <span>entries</span>
+        </div>
+        <div class="show_text">
+          <span>Showing</span>
+          <span id="entries_summary">Insert Stuff Here</span>
+          <span>entries</span>
+        </div>
+        <div class="glew-pagination">
+          <span>Page</span>
+          <select id="page_number">
+            <option selected="" value="1">1</option>
+          </select>
         </div>
       </div>
-    `
+    </div>
+  `
 
     // Remove the Mode table contents and replace with our structure
     if (removeTitle) {
@@ -1254,9 +1254,9 @@ const glew = {
 
     const columnObj = glew.getColumnsFromQuery(queryName);
     const columns = columnObj.map(c => c.name);
-    const data = initialData
-      ? initialData
-      : glew.getDataFromQuery(queryName);
+    const data = initialData ?
+      initialData :
+      glew.getDataFromQuery(queryName);
     let totalResults = data.length;
     let sortAscending = true;
     let num_results = $('#num_results').val()
@@ -1298,17 +1298,17 @@ const glew = {
                 -1
             }
           } else if (type === 'date') {
-              const parseTime = d3.timeParse(columnMap[sortBy].currentFormat);
-              const formatTime = d3.timeFormat(columnMap[sortBy].displayFormat);
-              const aparsed = parseTime(a[sortBy])
-              const bparsed = parseTime(b[sortBy])
-            return sortAscending
-              ? aparsed - bparsed
-              : bparsed - aparsed
+            const parseTime = d3.timeParse(columnMap[sortBy].currentFormat);
+            const formatTime = d3.timeFormat(columnMap[sortBy].displayFormat);
+            const aparsed = parseTime(a[sortBy])
+            const bparsed = parseTime(b[sortBy])
+            return sortAscending ?
+              aparsed - bparsed :
+              bparsed - aparsed
           } else {
-            return sortAscending
-              ? a[sortBy] - b[sortBy]
-              : b[sortBy] - a[sortBy]
+            return sortAscending ?
+              a[sortBy] - b[sortBy] :
+              b[sortBy] - a[sortBy]
           }
         });
         sortAscending = !sortAscending
@@ -1318,18 +1318,17 @@ const glew = {
 
     function createHeader(columnMap, tableId) {
       const tableHeader = Object.keys(columnMap).reduce((acc, cur) => {
-          let curRow = `<th class=${cur}>
-            <div class="layout-row ${cur}">
-              <span class=${cur}>${columnMap[cur].display}</span>
-              <div class="toggles">
-                <i class="material-icons">arrow_drop_up</i>
-                <i class="material-icons">arrow_drop_down</i>
-              </div>
+        let curRow = `<th class=${cur}>
+          <div class="layout-row ${cur}">
+            <span class=${cur}>${columnMap[cur].display}</span>
+            <div class="toggles">
+              <i class="material-icons">arrow_drop_up</i>
+              <i class="material-icons">arrow_drop_down</i>
             </div>
-          </th>`
-          return `${acc}${curRow}`
+          </div>
+        </th>`
+        return `${acc}${curRow}`
       }, '');
-      console.log('TableHeader: ', tableHeader)
       $(`#${tableId} .table-head-row`).append($(tableHeader));
     }
 
@@ -1433,21 +1432,22 @@ const glew = {
     $('#page_number').change(function() {
       selected_page = $('#page_number').val();
       num_results = $('#num_results').val()
-      endResults = +selected_page * +num_results;
       let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
       let sortCol = selectedRow.replace('selected', '')
+      endResults = +selected_page * +num_results;
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
       updatedData = data.slice(start, num_results * selected_page);
+      console.log('SOrted:', $(`#${tableId} .selected`))
       generateTable(updatedData, sortCol, tableId);
     });
     $('#num_results').change(function() {
       selected_page = $('#page_number').val();
       num_results = $('#num_results').val();
-      endResults = +selected_page * +num_results;
       let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
       let sortCol = selectedRow.replace('selected', '')
+      endResults = +selected_page * +num_results;
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
@@ -1459,6 +1459,5 @@ const glew = {
       }
     });
   },
-
 }
 
