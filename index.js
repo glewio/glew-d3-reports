@@ -1432,7 +1432,8 @@ const glew = {
     $('#page_number').change(function() {
       selected_page = $('#page_number').val();
       num_results = $('#num_results').val()
-      let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
+      let selectedRowEle = $(`#${tableId} table thead th.selected`)[0];
+      let selectedRow = selectedRowEle && selectedRowEle.className || initialSort
       let sortCol = selectedRow.replace('selected', '')
       endResults = +selected_page * +num_results;
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
@@ -1445,7 +1446,8 @@ const glew = {
     $('#num_results').change(function() {
       selected_page = $('#page_number').val();
       num_results = $('#num_results').val();
-      let selectedRow = $(`#${tableId} table thead th.selected`)[0].className;
+      let selectedRowEle = $(`#${tableId} table thead th.selected`)[0];
+      let selectedRow = selectedRowEle && selectedRowEle.className || initialSort
       let sortCol = selectedRow.replace('selected', '')
       console.log('SortCol: ', sortCol);
       endResults = +selected_page * +num_results;
