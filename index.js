@@ -1439,7 +1439,7 @@ const glew = {
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
-      updatedData = data.slice(start, num_results * selected_page);
+      let updatedData = data.slice(start, num_results * selected_page);
       console.log('SOrted:', $(`#${tableId} .selected`))
       generateTable(updatedData, sortCol, tableId);
     });
@@ -1454,7 +1454,7 @@ const glew = {
       entriesSummary = `${((selected_page - 1) * num_results) + 1} to ${endResults} of ${totalResults}`
       $("#entries_summary").text(entriesSummary)
       start = (selected_page - 1) * num_results;
-      updatedData = data.slice(start, num_results * selected_page);
+      let updatedData = data.slice(start, num_results * selected_page);
       console.log('UpdatedData: ', updatedData);
       generateTable(updatedData, sortCol, tableId);
       const pages = Math.ceil(data.length / num_results);
