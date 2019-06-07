@@ -1380,7 +1380,7 @@ const glew = {
 
     createHeader(columnMap, tableId);
     generateTable(displayData, sortedRow, tableId);
-    addClickHandler(columnMap, displayData, tableId);
+    addClickHandler(columnMap, data, tableId);
 
     function setSelected(selection, tableId) {
       const dir = sortAscending ? 'sort_desc' : 'sort_asc';
