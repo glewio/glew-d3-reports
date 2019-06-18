@@ -1029,7 +1029,7 @@ const glew = {
     function addTotalsRow(totalsAr) {
       $('.js-table-body').children();
       const t = totalsAr.map((r, i) => {
-        const row = Object.keys(r).map(d => {
+        const row = Object.keys(columnMap).map(d => {
           let format = columnMap[d].format || ',';
           let fmt = d3.format(format);
           let formatted = columnMap[d].type === 'text' ?
