@@ -932,7 +932,7 @@ const glew = {
         sortedRow = sortBy;
       }
 
-      const sorted = displayData.sort((a, b) => {
+      const sorted = data.sort((a, b) => {
         const type = columnMap[sortBy].type
         if (type === 'string') {
           const aName = a[sortBy].toUpperCase();
